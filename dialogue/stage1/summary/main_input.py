@@ -26,7 +26,7 @@ if __name__ == "__main__":
     args = parse_args_orig()
     orig_generator = OrigGenerator(args)
 
-    out_filename = f"./gen_data/{args.domain}10.orig.jsonl"
+    out_filename = f"./gen_data/{args.domain}.orig.jsonl"
 
     if os.path.exists(out_filename):
         raise FileExistsError

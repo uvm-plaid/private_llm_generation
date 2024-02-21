@@ -49,11 +49,17 @@ class OrigGenerator:
             model = AutoModelForCausalLM.from_pretrained("microsoft/BioGPT-large").to(self.args.device)
 
         elif self.args.domain == "dialog":
-            tokenizer = AutoTokenizer.from_pretrained("microsoft/DialoGPT-large", use_fast=False)
+            tokenizer = AutoTokenizer.from_pretrained("gpt2-xl", use_fast=False)
+            tokenizer.pad_token = tokenizer.eos_token
             tokenizer.padding_side = "left"
-            tokenizer.add_special_tokens({'pad_token': '[PAD]'})
 
-            model = AutoModelForCausalLM.from_pretrained("microsoft/DialoGPT-large").to(self.args.device)
+            model = AutoModelForCausalLM.from_pretrained("gpt2-xl").to(self.args.device)
+
+            # tokenizer = AutoTokenizer.from_pretrained("microsoft/DialoGPT-large", use_fast=False)
+            # tokenizer.padding_side = "left"
+            # # tokenizer.add_special_tokens({'pad_token': '[PAD]'})
+            # model = AutoModelForCausalLM.from_pretrained("microsoft/DialoGPT-large").to(self.args.device)
+            # print("MODEL: ", model)
 
         else:
             raise NotImplementedError
@@ -89,7 +95,8 @@ class OrigGenerator:
             )
 
         elif self.args.domain == "dialog":
-            bad_words = ["<", ">", "/", "<unk>", "[", "]", "▃"]
+            # bad_words = ["<", ">", "/", "<unk>", "[", "]", "▃"]
+            bad_words = ["\n\n", "\n"]
             bad_words_ids = self.tokenizer(bad_words, add_special_tokens=False).input_ids
             generation_config = GenerationConfig(
                 max_new_tokens=150, num_return_sequences=100,
@@ -132,29 +139,43 @@ class OrigGenerator:
             prefix = f"{topic}:"
 
         elif self.args.domain == "dialog":
-            dialog_prefix = random.choice(self.prefix_resource["dialog_prefixes"])
-            prefix = f"{dialog_prefix} "
+            # dialog_prefix = random.choice(self.prefix_resource["dialog_prefixes"])
+            # prefix = f"{dialog_prefix}"
+            return random.choice(self.prefix_resource["dialog_prefixes"])
+            
         else:
             raise NotImplementedError
 
         return prefix
 
     def generate_y_orig(self, prefix: Union[str, List[str]]) -> List[Tuple[str, str]]:
-        generation_list = self.generate_with_prefix(prefix)
+        if self.args.domain != "dialog":
+            generation_list = self.generate_with_prefix(prefix)
 
-        batch_pair_list = []
-        for text_idx, text in enumerate(generation_list):
-            if type(prefix) == str:
-                sent_list = self.postprocess_generation(prefix, text)
-            else:
-                sent_list = self.postprocess_generation(prefix[text_idx // self.args.num_return_sequences], text)
+            batch_pair_list = []
+            for text_idx, text in enumerate(generation_list):
+                if type(prefix) == str:
+                    sent_list = self.postprocess_generation(prefix, text)
+                else:
+                    sent_list = self.postprocess_generation(prefix[text_idx // self.args.num_return_sequences], text)
 
-            # pair sentences as x_l - y_orig
-            pair_list = [(" ".join(sent_list[:i]), sent_list[i]) for i in range(1, len(sent_list))
-                         if self.qualifies_as_y_orig(sent_list[i])]  # leave only the full sentences
-            batch_pair_list.extend(pair_list)
+                # pair sentences as x_l - y_orig
+                pair_list = [(" ".join(sent_list[:i]), sent_list[i]) for i in range(1, len(sent_list))
+                            if self.qualifies_as_y_orig(sent_list[i])]  # leave only the full sentences
+                batch_pair_list.extend(pair_list)
 
-        return batch_pair_list
+            return batch_pair_list
+        else:
+            # Dialog domain: Generate dialog based on the selected prompt
+            input_encoding = self.tokenizer(prefix, return_tensors="pt", padding=True).to(self.args.device)
+            outputs = self.model.generate(**input_encoding, **vars(self.generation_config))
+
+            generated_dialog = self.tokenizer.batch_decode(outputs, skip_special_tokens=True)
+            dialog_list = [str(sent).strip() for sent in self.spacy_model(generated_dialog[0]).sents]
+
+            batch_pair_list = [(" ".join(dialog_list[:i]), dialog_list[i]) for i in range(1, len(dialog_list))]
+            return batch_pair_list
+
 
     def generate_with_prefix(self, prefix: Union[str, List[str]]) -> List[str]:
         input_encoding = self.tokenizer(prefix, return_tensors="pt", padding=True).to(self.args.device)
