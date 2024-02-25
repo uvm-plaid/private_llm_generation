@@ -6,7 +6,7 @@
 #SBATCH --gres=gpu:1
 #SBATCH --cpus-per-task=1
 #SBATCH --time=01-23:59:59
-#SBATCH --job-name=2_Dialog_GenerateInitialDataset
+#SBATCH --job-name=1_Dialog_GenerateInitialDataset
 #SBATCH --output=%x_%j.out
 #SBATCH --mail-user=kngongiv@uvm.edu
 #SBATCH --mail-type=ALL 
@@ -29,4 +29,6 @@ python3 main_input.py --device_id=0 --domain='dialog'   # 1_GenerateInitialDatas
 
 # cd stage1/train/data/
 # python process.py --device_id=0  # CombineDatasets
+
+# CUDA_LAUNCH_BLOCKING=1 python3 main_input.py --device_id=0 --domain='dialog'
 

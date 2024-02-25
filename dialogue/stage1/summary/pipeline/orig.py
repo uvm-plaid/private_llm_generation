@@ -25,6 +25,7 @@ class OrigGenerator:
 
         if self.args.domain != "bio":
             with open(os.path.join(project_dir, f"data/prefix/{self.args.domain}_prefix.json"), "r") as f:
+                print("FIle: ", f)
                 self.prefix_resource = json.load(f)
 
     def init_tokenizer_and_model(self) -> Tuple[PreTrainedTokenizer, PreTrainedModel]:
@@ -161,15 +162,15 @@ class OrigGenerator:
 
             # prefix = random.choice(self.prefix_resource["dialog_prefixes"])
 
-            prefix = "The following is a conversation between two old friends, John and Sarah, who unexpectedly meet at a park:"
-            initial_sentence = "John: Hey Sarah! It's been a long time. How have you been?"
-            return prefix, initial_sentence
+            # prefix = "The following is a conversation between two old friends, John and Sarah, who unexpectedly meet at a park:"
+            # initial_sentence = "John: Hey Sarah! It's been a long time. How have you been?"
+            # return prefix, initial_sentence
         
             # # Select a random dialog scenario from the loaded JSON data
-            # scenario = random.choice(self.prefix_resource["dialog_prefixes"])
-            # prefix = scenario["prefix"]
-            # initial_sentence = scenario["initial_sentence"]
-            # return prefix, initial_sentence
+            scenario = random.choice(self.prefix_resource["dialog_prefixes"])
+            prefix = scenario["prefix"]
+            initial_sentence = scenario["initial_sentence"]
+            return prefix, initial_sentence
         
         elif self.args.domain == "email":
             # dialog_prefix = random.choice(self.prefix_resource["dialog_prefixes"])
@@ -200,8 +201,9 @@ class OrigGenerator:
         else:
             # Dialog domain: Generate dialog based on the selected prompt
             full_prompt = " "+ prefix+ " " +initial_sentence
-            print("prefix: ", prefix)
-            print("initial_sentence: ", initial_sentence)
+            print("---"*30)
+            print("PREFIX: ", prefix)
+            print("INITIAL: ", initial_sentence)
             print("GENERATING OUTPUT WITH PROMPT: ",full_prompt)
 
             generation_list = self.generate_with_prefix(prefix)
@@ -209,22 +211,33 @@ class OrigGenerator:
             # outputs = self.model.generate(**input_encoding, **vars(self.generation_config))
             # generated_dialog = self.tokenizer.batch_decode(outputs, skip_special_tokens=True)
 
-            trimmed_dialogs = [dialog.replace(full_prompt, initial_sentence, 1) for dialog in generation_list]
+            # trimmed_dialogs = [dialog.replace(full_prompt, initial_sentence, 1) for dialog in generation_list]
+            trimmed_dialogs = [dialog.replace(full_prompt, initial_sentence, 1) if initial_sentence else dialog for dialog in generation_list]
 
-            print("\nTRIMMED: ", trimmed_dialogs)
+            print(f"\nTRIMMED: {trimmed_dialogs}\n\n")
             batch_pair_list = []
-            for text_idx, text in enumerate(trimmed_dialogs):
-                if type(prefix) == str:
-                    sent_list = self.postprocess_generation(prefix, text)
-                else:
-                    sent_list = self.postprocess_generation(prefix[text_idx // self.args.num_return_sequences], text)
+            for text in trimmed_dialogs:
+                sent_list = self.postprocess_generation(full_prompt, text)
 
-                # pair sentences as x_l - y_orig
-                pair_list = [(" ".join(sent_list[:i]), sent_list[i]) for i in range(1, len(sent_list))
-                            if self.qualifies_as_y_orig(sent_list[i])]  # leave only the full sentences
+                # Pair sentences as x_l - y_orig, filtering by qualifies_as_y_orig
+                pair_list = [(" ".join(sent_list[:i]), sent_list[i]) for i in range(1, len(sent_list)) if self.qualifies_as_y_orig(sent_list[i])]
                 batch_pair_list.extend(pair_list)
 
             return batch_pair_list
+                # print("\nTRIMMED: ", trimmed_dialogs)
+            # batch_pair_list = []
+            # for text_idx, text in enumerate(trimmed_dialogs):
+            #     if type(prefix) == str:
+            #         sent_list = self.postprocess_generation(prefix, text)
+            #     else:
+            #         sent_list = self.postprocess_generation(prefix[text_idx // self.args.num_return_sequences], text)
+
+            #     # pair sentences as x_l - y_orig
+            #     pair_list = [(" ".join(sent_list[:i]), sent_list[i]) for i in range(1, len(sent_list))
+            #                 if self.qualifies_as_y_orig(sent_list[i])]  # leave only the full sentences
+            #     batch_pair_list.extend(pair_list)
+
+            # return batch_pair_list
 
             # dialog_list = [str(sent).strip() for sent in self.spacy_model(generated_dialog[0]).sents]
 
