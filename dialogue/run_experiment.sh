@@ -85,5 +85,5 @@ echo "Job ID:          ${SLURM_JOBID}"
 # # alpaca_eval --model_outputs='dpsgd.json' --reference_outputs='impossible_distil.json'
 
 ###################
-cd dp
-python dp_summary.py #DP_Dialog
+# cd dp
+# python dp_summary.py #DP_Dialog

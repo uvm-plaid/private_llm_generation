@@ -60,6 +60,12 @@ class OrigGenerator:
             # # tokenizer.add_special_tokens({'pad_token': '[PAD]'})
             # model = AutoModelForCausalLM.from_pretrained("microsoft/DialoGPT-large").to(self.args.device)
             # print("MODEL: ", model)
+        elif self.args.domain == "email":
+            tokenizer = AutoTokenizer.from_pretrained("gpt2-xl", use_fast=False)
+            tokenizer.pad_token = tokenizer.eos_token
+            tokenizer.padding_side = "left"
+
+            model = AutoModelForCausalLM.from_pretrained("gpt2-xl").to(self.args.device)
 
         else:
             raise NotImplementedError
@@ -103,6 +109,16 @@ class OrigGenerator:
                 do_sample=True, top_p=0.9, temperature=1.0, no_repeat_ngram_size=3,
                 bad_words_ids=bad_words_ids, pad_token_id=self.tokenizer.pad_token_id
             )
+        
+        elif self.args.domain == "email":
+            # bad_words = ["<", ">", "/", "<unk>", "[", "]", "▃"]
+            bad_words = ["\n\n", "\n"]
+            bad_words_ids = self.tokenizer(bad_words, add_special_tokens=False).input_ids
+            generation_config = GenerationConfig(
+                max_new_tokens=100, num_return_sequences=100,
+                do_sample=True, top_p=0.9, temperature=1.0, no_repeat_ngram_size=3,
+                bad_words_ids=bad_words_ids, pad_token_id=self.tokenizer.pad_token_id
+            )
 
         else:
             raise NotImplementedError
@@ -141,14 +157,30 @@ class OrigGenerator:
         elif self.args.domain == "dialog":
             # dialog_prefix = random.choice(self.prefix_resource["dialog_prefixes"])
             # prefix = f"{dialog_prefix}"
-            return random.choice(self.prefix_resource["dialog_prefixes"])
-            
+            # return random.choice(self.prefix_resource["dialog_prefixes"])
+
+            # prefix = random.choice(self.prefix_resource["dialog_prefixes"])
+
+            prefix = "The following is a conversation between two old friends, John and Sarah, who unexpectedly meet at a park:"
+            initial_sentence = "John: Hey Sarah! It's been a long time. How have you been?"
+            return prefix, initial_sentence
+        
+            # # Select a random dialog scenario from the loaded JSON data
+            # scenario = random.choice(self.prefix_resource["dialog_prefixes"])
+            # prefix = scenario["prefix"]
+            # initial_sentence = scenario["initial_sentence"]
+            # return prefix, initial_sentence
+        
+        elif self.args.domain == "email":
+            # dialog_prefix = random.choice(self.prefix_resource["dialog_prefixes"])
+            # prefix = f"{dialog_prefix}"
+            return random.choice(self.prefix_resource["email_prefixes"])
         else:
             raise NotImplementedError
 
         return prefix
 
-    def generate_y_orig(self, prefix: Union[str, List[str]]) -> List[Tuple[str, str]]:
+    def generate_y_orig(self, prefix: Union[str, List[str]], initial_sentence=None) -> List[Tuple[str, str]]:
         if self.args.domain != "dialog":
             generation_list = self.generate_with_prefix(prefix)
 
@@ -167,14 +199,37 @@ class OrigGenerator:
             return batch_pair_list
         else:
             # Dialog domain: Generate dialog based on the selected prompt
-            input_encoding = self.tokenizer(prefix, return_tensors="pt", padding=True).to(self.args.device)
-            outputs = self.model.generate(**input_encoding, **vars(self.generation_config))
+            full_prompt = " "+ prefix+ " " +initial_sentence
+            print("prefix: ", prefix)
+            print("initial_sentence: ", initial_sentence)
+            print("GENERATING OUTPUT WITH PROMPT: ",full_prompt)
 
-            generated_dialog = self.tokenizer.batch_decode(outputs, skip_special_tokens=True)
-            dialog_list = [str(sent).strip() for sent in self.spacy_model(generated_dialog[0]).sents]
+            generation_list = self.generate_with_prefix(prefix)
+            # input_encoding = self.tokenizer(prefix, return_tensors="pt", padding=True).to(self.args.device)
+            # outputs = self.model.generate(**input_encoding, **vars(self.generation_config))
+            # generated_dialog = self.tokenizer.batch_decode(outputs, skip_special_tokens=True)
 
-            batch_pair_list = [(" ".join(dialog_list[:i]), dialog_list[i]) for i in range(1, len(dialog_list))]
+            trimmed_dialogs = [dialog.replace(full_prompt, initial_sentence, 1) for dialog in generation_list]
+
+            print("\nTRIMMED: ", trimmed_dialogs)
+            batch_pair_list = []
+            for text_idx, text in enumerate(trimmed_dialogs):
+                if type(prefix) == str:
+                    sent_list = self.postprocess_generation(prefix, text)
+                else:
+                    sent_list = self.postprocess_generation(prefix[text_idx // self.args.num_return_sequences], text)
+
+                # pair sentences as x_l - y_orig
+                pair_list = [(" ".join(sent_list[:i]), sent_list[i]) for i in range(1, len(sent_list))
+                            if self.qualifies_as_y_orig(sent_list[i])]  # leave only the full sentences
+                batch_pair_list.extend(pair_list)
+
             return batch_pair_list
+
+            # dialog_list = [str(sent).strip() for sent in self.spacy_model(generated_dialog[0]).sents]
+
+            # batch_pair_list = [(" ".join(dialog_list[:i]), dialog_list[i]) for i in range(1, len(dialog_list))]
+            # return batch_pair_list
 
 
     def generate_with_prefix(self, prefix: Union[str, List[str]]) -> List[str]:
@@ -230,9 +285,32 @@ class OrigGenerator:
             out = default
 
         elif self.args.domain == "dialog":
-            default = len(text) >= 3 and "\n" not in text and text[-1] in [".", "?", "!"]
-            contains_prefix = any(prefix in text for prefix in self.prefix_resource)  # Check if text contains any prefix
-            out = default and contains_prefix
+            default = len(text) > 1 and "\n" not in text 
+            out = default 
+
+        # elif self.args.domain == "dialog":
+        #     # Basic checks for dialog text.
+        #     default = len(text) > 1 and "\n" not in text
+
+        #     # Check for conversational markers indicating a change of speaker or a dialog structure.
+        #     # This can include direct address using names or pronouns, or conversational connectors like "said", "replied", "asked".
+        #     conversational_markers = [" said ", " replied ", " asked ", ":", "-", "—"]  # Including common dialog punctuation like colons and dashes.
+        #     contains_conversational_marker = any(marker in text for marker in conversational_markers)
+
+        #     # Advanced check: Ensure there's an indication of a response or change in speaker.
+        #     # This could be refined further with more sophisticated NLP techniques to detect direct speech, questions and answers, or alternating pronouns indicative of dialog.
+        #     speaker_change_indicated = ":" in text or "-" in text or "—" in text  # Simple heuristic for speaker changes.
+
+        #     out = default and (contains_conversational_marker or speaker_change_indicated)
+
+
+        elif self.args.domain == "email":
+            # For emails, ensure the text is well-structured and includes elements typical of email formatting.
+            default = len(text) >= 5 and "\n" not in text  # Expecting longer sentences in emails.
+            ends_with_punctuation = text[-1] in [".", "?", "!"]
+            contains_salutation_or_closure = any(word in text.lower() for word in ["dear", "regards", "sincerely", "best", "thank you"])
+            free_of_casual_slang = all(slang not in text.lower() for slang in ["lol", "btw", "thx", "pls"])
+            out = default and ends_with_punctuation and contains_salutation_or_closure and free_of_casual_slang
 
         else:
             raise NotImplementedError

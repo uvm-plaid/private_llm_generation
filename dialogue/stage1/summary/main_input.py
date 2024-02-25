@@ -26,15 +26,20 @@ if __name__ == "__main__":
     args = parse_args_orig()
     orig_generator = OrigGenerator(args)
 
-    out_filename = f"./gen_data/{args.domain}.orig.jsonl"
+    out_filename = f"./gen_data/{args.domain}.orig6.jsonl"
 
     if os.path.exists(out_filename):
         raise FileExistsError
 
     out_list = []
-    for i in tqdm(range(3600)):
-        prefix = orig_generator.generate_prefix()
-        batch_pair_list = orig_generator.generate_y_orig(prefix)
+    # for i in tqdm(range(3600)):
+    for i in range(3600):
+        if args.domain == "dialog":
+            prefix, initial_sentence = orig_generator.generate_prefix()
+            batch_pair_list = orig_generator.generate_y_orig(prefix,initial_sentence=initial_sentence)
+        else:
+            prefix = orig_generator.generate_prefix()
+            batch_pair_list = orig_generator.generate_y_orig(prefix)
 
         if args.domain == "bio":
             processed_batch_pair_list = [(bio_gpt_postprocess(x_l), bio_gpt_postprocess(y_orig))
