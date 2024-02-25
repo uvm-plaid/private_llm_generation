@@ -43,11 +43,24 @@ class ConGenerator:
             model = AutoModelForCausalLM.from_pretrained("microsoft/BioGPT-large").to(self.args.device)
         
         elif self.args.domain == "dialog":
-            tokenizer = AutoTokenizer.from_pretrained("microsoft/DialoGPT-large", use_fast=False)
+            tokenizer = AutoTokenizer.from_pretrained("gpt2-xl", use_fast=False)
+            tokenizer.pad_token = tokenizer.eos_token
             tokenizer.padding_side = "left"
-            tokenizer.add_special_tokens({'pad_token': '[PAD]'})
 
-            model = AutoModelForCausalLM.from_pretrained("microsoft/DialoGPT-large").to(self.args.device)
+            model = AutoModelForCausalLM.from_pretrained("gpt2-xl").to(self.args.device)
+
+        elif self.args.domain == "email":
+            tokenizer = AutoTokenizer.from_pretrained("gpt2-xl", use_fast=False)
+            tokenizer.pad_token = tokenizer.eos_token
+            tokenizer.padding_side = "left"
+
+            model = AutoModelForCausalLM.from_pretrained("gpt2-xl").to(self.args.device)
+
+            # tokenizer = AutoTokenizer.from_pretrained("microsoft/DialoGPT-large", use_fast=False)
+            # tokenizer.padding_side = "left"
+            # tokenizer.add_special_tokens({'pad_token': '[PAD]'})
+
+            # model = AutoModelForCausalLM.from_pretrained("microsoft/DialoGPT-large").to(self.args.device)
 
         else:
             raise NotImplementedError
@@ -83,11 +96,22 @@ class ConGenerator:
             )
 
         elif self.args.domain == "dialog":
-            bad_words = ["<", ">", "/", "<unk>", "[", "]", "▃"]
+            # bad_words = ["<", ">", "/", "<unk>", "[", "]", "▃"]
+            bad_words = ["\n\n", "\n"]
             bad_words_ids = self.tokenizer(bad_words, add_special_tokens=False).input_ids
             generation_config = GenerationConfig(
                 max_new_tokens=100, num_return_sequences=100,
                 do_sample=True, top_p=0.9, temperature=0.5, no_repeat_ngram_size=3,
+                bad_words_ids=bad_words_ids, pad_token_id=self.tokenizer.pad_token_id
+            )
+        
+        elif self.args.domain == "email":
+            # bad_words = ["<", ">", "/", "<unk>", "[", "]", "▃"]
+            bad_words = ["\n\n", "\n"]
+            bad_words_ids = self.tokenizer(bad_words, add_special_tokens=False).input_ids
+            generation_config = GenerationConfig(
+                max_new_tokens=100, num_return_sequences=100,
+                do_sample=True, top_p=0.9, temperature=1.0, no_repeat_ngram_size=3,
                 bad_words_ids=bad_words_ids, pad_token_id=self.tokenizer.pad_token_id
             )
 
@@ -174,10 +198,22 @@ class ConGenerator:
             default = len(text) >= 3 and "\n" not in text and text[-1] in [".", "?", "!"]
             out = default
 
+        elif self.args.domain == "dialog":
+            default = len(text) > 1 and "\n" not in text 
+            out = default 
         # elif self.args.domain == "dialog":
         #     default = len(text) >= 3 and "\n" not in text and text[-1] in [".", "?", "!"]
         #     # contains_prefix = any(prefix in text for prefix in self.prefix_resource)
         #     out = default and contains_prefix
+            
+        elif self.args.domain == "email":
+            # For emails, ensure the text is well-structured and includes elements typical of email formatting.
+            default = len(text) >= 5 and "\n" not in text  # Expecting longer sentences in emails.
+            ends_with_punctuation = text[-1] in [".", "?", "!"]
+            contains_salutation_or_closure = any(word in text.lower() for word in ["dear", "regards", "sincerely", "best", "thank you"])
+            free_of_casual_slang = all(slang not in text.lower() for slang in ["lol", "btw", "thx", "pls"])
+            out = default and ends_with_punctuation and contains_salutation_or_closure and free_of_casual_slang
+
 
         else:
             raise NotImplementedError

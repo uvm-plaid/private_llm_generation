@@ -1,0 +1,5 @@
+
+**/gen_data
+**/out_files
+**/wandb
+*.out

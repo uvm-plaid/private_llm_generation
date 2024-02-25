@@ -75,7 +75,7 @@ torch.manual_seed(42)
 # Load the tokenizer
 max_input_length = 150 #1024
 max_output_length = 100 #256 #250
-batch_size = 5
+batch_size = 3
 epochs = 8
 gradient_accumulation_steps = 10
 
@@ -89,7 +89,7 @@ val_dataset = load_dataset("samsum", split="validation")
 
 # Checkpoint directories
 # checkpoint_dir = "./results/dp_results/test/run"
-checkpoint_dir = f"./results/dp_results/{wandb.run.name}"
+checkpoint_dir = f"./dp_results/{wandb.run.name}"
 # checkpoint_dir = f"./results/dp_results/test/rich-serenity-9"
 os.makedirs(checkpoint_dir, exist_ok=True)
 
