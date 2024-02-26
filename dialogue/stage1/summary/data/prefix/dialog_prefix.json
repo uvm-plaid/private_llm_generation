@@ -1,46 +1,305 @@
 {
     "dialog_prefixes": [
-        {
-            "prefix": "The following is a conversation between two college roommates reminiscing about their university days:",
-            "initial_sentence": "Alex: Remember our first year at college? Those were the days."
+      {
+        "prefix": "The following is a conversation between two college roommates, Alex and Jordan, reminiscing about their university days:",
+        "initial_sentence": "Alex: Remember our first year at college? Those were the days."
+      },
+      {
+        "prefix": "The following is a chat between two parents, Sam and Taylor, discussing their kids' first day at school:",
+        "initial_sentence": "Sam: How did Jamie take to their first day at school? Mine was a bit teary-eyed."
+      },
+      {
+        "prefix": "The following is a dialogue between a fitness coach, Coach Riley, and a client, Morgan, discussing workout goals:",
+        "initial_sentence": "Coach Riley: So, what are your fitness goals for this year?"
+      },
+      {
+        "prefix": "The following is a conversation between friends, Casey and Harper, planning a surprise birthday party:",
+        "initial_sentence": "Casey: We need to make this birthday surprise for Jamie epic. Any ideas?"
+      },
+      {
+        "prefix": "The following is a chat between two colleagues, Jordan and Charlie, about the challenges of working from home:",
+        "initial_sentence": "Jordan: Working from home has its perks, but I miss the office coffee machine."
+      },
+      {
+        "prefix": "The following is a discussion between a mentor, Parker, and a mentee, Bailey, about career growth and opportunities:",
+        "initial_sentence": "Mentor Parker: Let's talk about where you see yourself in the next five years."
+      },
+      {
+        "prefix": "The following is a conversation between neighbors, Robin and Drew, discussing community issues and local events:",
+        "initial_sentence": "Robin: Did you hear about the new park they're planning to build?"
+      },
+      {
+        "prefix": "The following is a chat between two friends who are movie buffs, Charlie and Alex, discussing the latest film release:",
+        "initial_sentence": "Charlie: Just saw the new Marvel movie. It's mind-blowing!"
+      },
+      {
+        "prefix": "The following is a dialogue between a customer, Bailey, and a support agent, Quinn, regarding a product issue:",
+        "initial_sentence": "Customer Bailey: I'm having trouble setting up my new device. Can you help?"
+      },
+      {
+        "prefix": "The following is a conversation between two travelers, Taylor and Casey, sharing tips about backpacking in Europe:",
+        "initial_sentence": "Taylor: If you're backpacking through Europe, you've got to visit Prague."
+      }, 
+      {
+        "prefix": "The following is a conversation between long-distance friends, Maya and Leo, catching up after months:",
+        "initial_sentence": "Maya: Leo! It's been ages. How's life on your end?"
         },
         {
-            "prefix": "The following is a chat between two parents discussing their kids' first day at school:",
-            "initial_sentence": "Sam: How did Jamie take to their first day at school? Mine was a bit teary-eyed."
+        "prefix": "The following is a chat between two avid gardeners, Priya and Noah, exchanging tips on organic gardening:",
+        "initial_sentence": "Priya: Have you tried using eggshells as a natural fertilizer? Works wonders for tomatoes."
         },
         {
-            "prefix": "The following is a dialogue between a fitness coach and a client discussing workout goals:",
-            "initial_sentence": "Coach Riley: So, what are your fitness goals for this year?"
+        "prefix": "The following is a dialogue between an entrepreneur, Ava, and a mentor, Ethan, discussing startup challenges:",
+        "initial_sentence": "Ava: Ethan, navigating investor relations is trickier than I thought. Any advice?"
         },
         {
-            "prefix": "The following is a conversation between friends planning a surprise birthday party:",
-            "initial_sentence": "Morgan: We need to make this birthday surprise for Casey epic. Any ideas?"
+        "prefix": "The following is a conversation between high school classmates, Zoe and Max, planning a reunion:",
+        "initial_sentence": "Zoe: Max, think we can pull off a 10-year reunion? Who should we invite?"
         },
         {
-            "prefix": "The following is a chat between two colleagues discussing the challenges of working from home:",
-            "initial_sentence": "Jordan: Working from home has its perks, but I miss the office coffee machine."
+        "prefix": "The following is a chat between parents, Olivia and Liam, on balancing work and family time:",
+        "initial_sentence": "Olivia: It's challenging, Liam. How do you manage work and family without burning out?"
         },
         {
-            "prefix": "The following is a discussion between a mentor and a mentee about career growth and opportunities:",
-            "initial_sentence": "Mentor Parker: Let's talk about where you see yourself in the next five years."
+        "prefix": "The following is a discussion between a writer, Emily, and an editor, Jack, about creative blocks:",
+        "initial_sentence": "Emily: Jack, I'm stuck at chapter three. How do you deal with writer's block?"
         },
         {
-            "prefix": "The following is a conversation between neighbors discussing community issues and local events:",
-            "initial_sentence": "Robin: Did you hear about the new park they're planning to build?"
+        "prefix": "The following is a conversation between neighbors, Amelia and Henry, about a neighborhood book club:",
+        "initial_sentence": "Amelia: Henry, interested in a neighborhood book club? I'm thinking of starting one."
         },
         {
-            "prefix": "The following is a chat between two friends who are movie buffs, discussing the latest film release:",
-            "initial_sentence": "Charlie: Just saw the new Marvel movie. It's mind-blowing!"
+        "prefix": "The following is a chat between two pet owners, Charlotte and Oliver, about pet care while traveling:",
+        "initial_sentence": "Charlotte: Oliver, how do you manage pet care when traveling? I need tips."
         },
         {
-            "prefix": "The following is a dialogue between a customer and a support agent regarding a product issue:",
-            "initial_sentence": "Customer Bailey: I'm having trouble setting up my new device. Can you help?"
+        "prefix": "The following is a dialogue between amateur photographers, Mia and Lucas, discussing photography gear:",
+        "initial_sentence": "Mia: Lucas, thinking of upgrading my lens. What do you recommend for landscapes?"
         },
         {
-            "prefix": "The following is a conversation between two travelers sharing tips about backpacking in Europe:",
-            "initial_sentence": "Taylor: If you're backpacking through Europe, you've got to visit Prague."
+        "prefix": "The following is a conversation between two students, Harper and Elijah, about study techniques for finals:",
+        "initial_sentence": "Harper: Elijah, finals are coming. How do you plan your study sessions?"
+        },
+        {
+        "prefix": "The following is a chat between two music enthusiasts, Sofia and Benjamin, sharing concert experiences:",
+        "initial_sentence": "Sofia: Benjamin, just went to an amazing live concert. Have you been to any lately?"
+        },
+        {
+        "prefix": "The following is a dialogue between a fitness trainer, Lily, and a newbie, William, on starting a fitness journey:",
+        "initial_sentence": "Lily: William, what motivates you to start your fitness journey now?"
+        },
+        {
+        "prefix": "The following is a conversation between two DIY enthusiasts, Chloe and James, discussing home renovation projects:",
+        "initial_sentence": "Chloe: James, I'm planning to repaint the living room. Got any eco-friendly paint recommendations?"
+        },
+        {
+        "prefix": "The following is a chat between remote workers, Isabella and Michael, sharing home office setups:",
+        "initial_sentence": "Isabella: Michael, how do you keep your home office space motivating? Need some inspiration."
+        },
+        {
+        "prefix": "The following is a discussion between a language learner, Ella, and a polyglot, Alexander, on learning new languages:",
+        "initial_sentence": "Ella: Alexander, you speak four languages! Any tips for a beginner like me?"
+        },
+        {
+        "prefix": "The following is a conversation between two chefs, Scarlett and Daniel, discussing fusion cuisine ideas:",
+        "initial_sentence": "Scarlett: Daniel, I'm experimenting with fusion dishes. Ever tried blending Italian and Japanese cuisines?"
+        },
+        {
+        "prefix": "The following is a chat between two environmental activists, Grace and Matthew, on reducing plastic use:",
+        "initial_sentence": "Grace: Matthew, have you found any effective ways to cut down on plastic in daily life?"
+        },
+        {
+        "prefix": "The following is a dialogue between two travelers, Nora and Jackson, comparing notes on solo vs. group travel:",
+        "initial_sentence": "Nora: Jackson, you've done both solo and group travel. Which do you prefer and why?"
+        },
+        {
+        "prefix": "The following is a conversation between two comic book fans, Aiden and Emma, debating the best graphic novels:",
+        "initial_sentence": "Aiden: Emma, in your opinion, which graphic novels are absolutely essential?"
+        },
+        {
+        "prefix": "The following is a chat between two aspiring entrepreneurs, Madison and Joseph, brainstorming business ideas:",
+        "initial_sentence": "Madison: Joseph, if you could start any business, what would it be and why?"
+        },
+        {
+        "prefix": "The following is a conversation between childhood friends, Avery and Carter, reminiscing about old video games:",
+        "initial_sentence": "Avery: Remember when we used to marathon Zelda games during summer breaks?"
+        },
+        {
+        "prefix": "The following is a chat between aspiring artists, Evelyn and Riley, discussing their inspirations and challenges:",
+        "initial_sentence": "Evelyn: Riley, where do you find inspiration when everything feels bland?"
+        },
+        {
+        "prefix": "The following is a dialogue between two environmental scientists, Zoey and Wyatt, about climate change solutions:",
+        "initial_sentence": "Zoey: Wyatt, considering our current data, what sustainable practices do you think could make a significant impact?"
+        },
+        {
+        "prefix": "The following is a conversation between two expatriates, Mila and Henry, sharing tips on adapting to a new country:",
+        "initial_sentence": "Mila: Henry, how did you manage the cultural shock when you first moved abroad?"
+        },
+        {
+        "prefix": "The following is a chat between new parents, Luna and Sebastian, discussing baby sleep training techniques:",
+        "initial_sentence": "Luna: Sebastian, any luck with the sleep training methods we talked about last week?"
+        },
+        {
+        "prefix": "The following is a dialogue between two amateur astronomers, Camila and Jack, planning a stargazing night:",
+        "initial_sentence": "Camila: Jack, there's a meteor shower next week. Got any spots in mind for a clear view?"
+        },
+        {
+        "prefix": "The following is a conversation between two history buffs, Anna and Levi, debating historical inaccuracies in movies:",
+        "initial_sentence": "Anna: Levi, which movie do you think butchered its historical context the most?"
+        },
+        {
+        "prefix": "The following is a chat between two entrepreneurs, Scarlett and Oliver, discussing work-life balance while running a startup:",
+        "initial_sentence": "Scarlett: Oliver, how do you manage to keep a healthy work-life balance with all the startup chaos?"
+        },
+        {
+        "prefix": "The following is a dialogue between a novelist, Nora, and her editor, Mason, about the final draft of her book:",
+        "initial_sentence": "Nora: Mason, do you think the ending of the book delivers the impact we aimed for?"
+        },
+        {
+        "prefix": "The following is a conversation between two musicians, Hazel and Ethan, sharing gig experiences and audience interactions:",
+        "initial_sentence": "Hazel: Ethan, what's your most memorable interaction with an audience member during a gig?"
+        },
+        {
+        "prefix": "The following is a chat between two college students, Stella and James, navigating their first internship experiences:",
+        "initial_sentence": "Stella: James, how's your internship going? Mine's a bit overwhelming."
+        },
+        {
+        "prefix": "The following is a dialogue between a mentor, Charlotte, and her protégé, Owen, on overcoming creative blocks in design:",
+        "initial_sentence": "Charlotte: Owen, creative blocks are tough. What's your current biggest challenge?"
+        },
+        {
+        "prefix": "The following is a conversation between two chefs, Amelia and Benjamin, discussing the fusion of cuisines from around the world:",
+        "initial_sentence": "Amelia: Benjamin, have you ever experimented with combining flavors from different cuisines? What's your take?"
+        },
+        {
+        "prefix": "The following is a chat between two travel bloggers, Isabella and Lucas, comparing notes on the most underrated destinations:",
+        "initial_sentence": "Isabella: Lucas, in your travels, which destination do you think deserves more attention?"
+        },
+        {
+        "prefix": "The following is a dialogue between two DIY enthusiasts, Mia and Alexander, discussing upcycling projects and sustainability:",
+        "initial_sentence": "Mia: Alexander, have you tackled any upcycling projects lately? I'm looking for inspiration."
+        },
+        {
+        "prefix": "The following is a conversation between two teachers, Sofia and Michael, sharing strategies for engaging students online:",
+        "initial_sentence": "Sofia: Michael, with all classes online now, how do you keep your students engaged?"
+        },
+        {
+        "prefix": "The following is a chat between two book lovers, Harper and Elijah, discussing the impact of literature on personal growth:",
+        "initial_sentence": "Harper: Elijah, can you share a book that profoundly impacted your perspective on life?"
+        },
+        {
+        "prefix": "The following is a dialogue between two fitness trainers, Lily and Daniel, debating the effectiveness of trendy diets:",
+        "initial_sentence": "Lily: Daniel, with all the diet trends popping up, which ones do you think are actually worth following?"
+        },
+        {
+        "prefix": "The following is a conversation between two film directors, Chloe and William, about the evolution of cinema technology:",
+        "initial_sentence": "Chloe: William, how do you think the latest technology is shaping the future of filmmaking?"
+        },
+        {
+        "prefix": "The following is a chat between two professional gamers, Grace and Matthew, discussing the future of esports:",
+        "initial_sentence": "Grace: Matthew, where do you see the world of esports heading in the next few years?"
+        },
+        {
+        "prefix": "The following is a conversation between two garden enthusiasts, Lily and Julian, about organic gardening tips:",
+        "initial_sentence": "Lily: Julian, have you had success with companion planting in your organic garden?"
+        },
+        {
+        "prefix": "The following is a chat between two neighbors, Grace and Liam, discussing community safety initiatives:",
+        "initial_sentence": "Grace: Liam, what are your thoughts on the new neighborhood watch program?"
+        },
+        {
+        "prefix": "The following is a dialogue between a language tutor, Emma, and her student, Noah, about learning languages efficiently:",
+        "initial_sentence": "Emma: Noah, which language learning technique do you find most effective?"
+        },
+        {
+        "prefix": "The following is a conversation between two fitness enthusiasts, Olivia and William, about overcoming fitness plateaus:",
+        "initial_sentence": "Olivia: William, how do you change your workout routine when you hit a plateau?"
+        },
+        {
+        "prefix": "The following is a chat between two pet owners, Ava and James, sharing pet care tips for new pet owners:",
+        "initial_sentence": "Ava: James, what advice would you give to someone who's just adopted their first pet?"
+        },
+        {
+        "prefix": "The following is a dialogue between a professional photographer, Sophia, and an amateur, Henry, about photography techniques:",
+        "initial_sentence": "Sophia: Henry, what aspect of photography are you currently focusing on improving?"
+        },
+        {
+        "prefix": "The following is a conversation between two volunteers, Isla and Owen, about the impact of volunteering on personal growth:",
+        "initial_sentence": "Isla: Owen, how has volunteering shaped your perspective on community service?"
+        },
+        {
+        "prefix": "The following is a chat between two comic book fans, Mia and Sebastian, debating the best comic book adaptations:",
+        "initial_sentence": "Mia: Sebastian, in your opinion, which comic book has been adapted most successfully to the screen?"
+        },
+        {
+        "prefix": "The following is a dialogue between a small business owner, Charlotte, and a marketing expert, Elijah, on effective marketing strategies:",
+        "initial_sentence": "Charlotte: Elijah, what marketing strategy do you think is underrated but highly effective for small businesses?"
+        },
+        {
+        "prefix": "The following is a conversation between two aspiring chefs, Amelia and Benjamin, discussing the challenges of culinary school:",
+        "initial_sentence": "Amelia: Benjamin, what's been the biggest challenge for you in culinary school?"
+        },
+        {
+        "prefix": "The following is a chat between two students, Harper and Daniel, discussing strategies for managing study stress:",
+        "initial_sentence": "Harper: Daniel, how do you manage stress during exam periods?"
+        },
+        {
+        "prefix": "The following is a dialogue between two tech enthusiasts, Evelyn and Lucas, about the future of wearable technology:",
+        "initial_sentence": "Evelyn: Lucas, where do you see wearable technology heading in the next five years?"
+        },
+        {
+        "prefix": "The following is a conversation between two environmental activists, Abigail and Mason, discussing renewable energy sources:",
+        "initial_sentence": "Abigail: Mason, which renewable energy source do you think holds the most promise for the future?"
+        },
+        {
+        "prefix": "The following is a chat between two fashion designers, Emily and Logan, discussing sustainable fashion trends:",
+        "initial_sentence": "Emily: Logan, how do you incorporate sustainability into your fashion designs?"
+        },
+        {
+        "prefix": "The following is a dialogue between a blogger, Madison, and a social media influencer, Jacob, about building an online presence:",
+        "initial_sentence": "Madison: Jacob, what's your top tip for someone looking to build their online presence?"
+        },
+        {
+        "prefix": "The following is a conversation between two DIY enthusiasts, Scarlett and Michael, about repurposing old furniture:",
+        "initial_sentence": "Scarlett: Michael, have you undertaken any interesting furniture repurposing projects lately?"
+        },
+        {
+        "prefix": "The following is a chat between two high school teachers, Victoria and Ethan, sharing effective teaching methods:",
+        "initial_sentence": "Victoria: Ethan, have you discovered any new teaching methods that engage students more effectively?"
+        },
+        {
+        "prefix": "The following is a dialogue between two travel enthusiasts, Aiden and Emma, about solo versus group travel experiences:",
+        "initial_sentence": "Aiden: Emma, do you prefer solo travel or group trips? Why?"
+        },
+        {
+        "prefix": "The following is a conversation between two artists, Elizabeth and Alexander, discussing the impact of art on society:",
+        "initial_sentence": "Elizabeth: Alexander, what role do you believe art plays in shaping societal values?"
+        },
+        {
+        "prefix": "The following is a chat between two new neighbors, Sofia and Jackson, getting to know each other:",
+        "initial_sentence": "Sofia: Jackson, what's something interesting about you that I should know?"
+        },
+        {
+        "prefix": "The following is a dialogue between two book club members, Avery and Carter, choosing the next book to read:",
+        "initial_sentence": "Avery: Carter, any genre preferences for our next book club selection?"
+        },
+        {
+        "prefix": "The following is a conversation between two gamers, Riley and Wyatt, discussing the evolution of video games:",
+        "initial_sentence": "Riley: Wyatt, how do you think video games have evolved in the last decade?"
+        },
+        {
+        "prefix": "The following is a chat between two expatriates, Zoey and Henry, sharing experiences of living abroad:",
+        "initial_sentence": "Zoey: Henry, what's one piece of advice you'd give to someone moving abroad for the first time?"
+        },
+        {
+        "prefix": "The following is a dialogue between a yoga instructor, Mila and a beginner, Sebastian, discussing the benefits of yoga:",
+        "initial_sentence": "Mila: Sebastian, have you noticed any changes since you started practicing yoga?"
+        },
+        {
+        "prefix": "The following is a conversation between two history enthusiasts, Luna and Jack, discussing underrated historical figures:",
+        "initial_sentence": "Luna: Jack, who do you think is an underrated figure in history that deserves more recognition?"
         }
     ]
-}
-
- 
+  }
+  
