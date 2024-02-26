@@ -106,7 +106,7 @@ class OrigGenerator:
             bad_words = ["\n\n", "\n"]
             bad_words_ids = self.tokenizer(bad_words, add_special_tokens=False).input_ids
             generation_config = GenerationConfig(
-                max_new_tokens=150, num_return_sequences=100,
+                max_new_tokens=150, num_return_sequences=2,
                 do_sample=True, top_p=0.9, temperature=1.0, no_repeat_ngram_size=3,
                 bad_words_ids=bad_words_ids, pad_token_id=self.tokenizer.pad_token_id
             )
@@ -181,6 +181,7 @@ class OrigGenerator:
 
         return prefix
 
+    
     def generate_y_orig(self, prefix: Union[str, List[str]], initial_sentence=None) -> List[Tuple[str, str]]:
         if self.args.domain != "dialog":
             generation_list = self.generate_with_prefix(prefix)
@@ -199,31 +200,50 @@ class OrigGenerator:
 
             return batch_pair_list
         else:
-            # Dialog domain: Generate dialog based on the selected prompt
-            full_prompt = " "+ prefix+ " " +initial_sentence
+
+            full_prompt = (prefix.strip() + " " + initial_sentence.strip()) if initial_sentence else prefix.strip()
             print("---"*30)
             print("PREFIX: ", prefix)
             print("INITIAL: ", initial_sentence)
-            print("GENERATING OUTPUT WITH PROMPT: ",full_prompt)
+            print("GENERATING OUTPUT WITH PROMPT: ", full_prompt)
 
-            generation_list = self.generate_with_prefix(prefix)
-            # input_encoding = self.tokenizer(prefix, return_tensors="pt", padding=True).to(self.args.device)
-            # outputs = self.model.generate(**input_encoding, **vars(self.generation_config))
-            # generated_dialog = self.tokenizer.batch_decode(outputs, skip_special_tokens=True)
+            generation_list = self.generate_with_prefix(full_prompt)
 
-            # trimmed_dialogs = [dialog.replace(full_prompt, initial_sentence, 1) for dialog in generation_list]
-            trimmed_dialogs = [dialog.replace(full_prompt, initial_sentence, 1) if initial_sentence else dialog for dialog in generation_list]
+            # Using regex to replace the full_prompt with initial_sentence, allowing for flexible whitespace handling
+            pattern = re.compile(re.escape(full_prompt), re.IGNORECASE)
+            trimmed_dialogs = [pattern.sub(initial_sentence.strip(), dialog, 1) if initial_sentence else dialog for dialog in generation_list]
 
             print(f"\nTRIMMED: {trimmed_dialogs}\n\n")
-            batch_pair_list = []
-            for text in trimmed_dialogs:
-                sent_list = self.postprocess_generation(full_prompt, text)
-
-                # Pair sentences as x_l - y_orig, filtering by qualifies_as_y_orig
-                pair_list = [(" ".join(sent_list[:i]), sent_list[i]) for i in range(1, len(sent_list)) if self.qualifies_as_y_orig(sent_list[i])]
-                batch_pair_list.extend(pair_list)
-
+            dialog_list = [str(sent).strip() for sent in self.spacy_model(trimmed_dialogs[0]).sents]
+            batch_pair_list = [(" ".join(dialog_list[:i]), dialog_list[i]) for i in range(1, len(dialog_list)) if self.qualifies_as_y_orig(dialog_list[i])]
+            # batch_pair_list = [(" ".join(dialog_list[:i]), dialog_list[i]) for i in range(1, len(dialog_list))]
             return batch_pair_list
+
+    #         # Dialog domain: Generate dialog based on the selected prompt
+    #         full_prompt = " "+ prefix+ " " +initial_sentence
+    #         print("---"*30)
+    #         print("PREFIX: ", prefix)
+    #         print("INITIAL: ", initial_sentence)
+    #         print("GENERATING OUTPUT WITH PROMPT: ",full_prompt)
+
+    #         generation_list = self.generate_with_prefix(prefix)
+    #         # input_encoding = self.tokenizer(prefix, return_tensors="pt", padding=True).to(self.args.device)
+    #         # outputs = self.model.generate(**input_encoding, **vars(self.generation_config))
+    #         # generated_dialog = self.tokenizer.batch_decode(outputs, skip_special_tokens=True)
+
+    #         # trimmed_dialogs = [dialog.replace(full_prompt, initial_sentence, 1) for dialog in generation_list]
+    #         trimmed_dialogs = [dialog.replace(full_prompt, initial_sentence, 1) if initial_sentence else dialog for dialog in generation_list]
+
+    #         print(f"\nTRIMMED: {trimmed_dialogs}\n\n")
+    #         batch_pair_list = []
+    #         for text in trimmed_dialogs:
+    #             sent_list = self.postprocess_generation(full_prompt, text)
+
+    #             # Pair sentences as x_l - y_orig, filtering by qualifies_as_y_orig
+    #             pair_list = [(" ".join(sent_list[:i]), sent_list[i]) for i in range(1, len(sent_list)) if self.qualifies_as_y_orig(sent_list[i])]
+    #             batch_pair_list.extend(pair_list)
+
+    #         return batch_pair_list
                 # print("\nTRIMMED: ", trimmed_dialogs)
             # batch_pair_list = []
             # for text_idx, text in enumerate(trimmed_dialogs):
@@ -245,16 +265,34 @@ class OrigGenerator:
             # return batch_pair_list
 
 
-    def generate_with_prefix(self, prefix: Union[str, List[str]]) -> List[str]:
-        input_encoding = self.tokenizer(prefix, return_tensors="pt", padding=True).to(self.args.device)
+    # def generate_with_prefix(self, prefix: Union[str, List[str]]) -> List[str]:
+    #     input_encoding = self.tokenizer(prefix, return_tensors="pt", padding=True).to(self.args.device)
 
-        outputs = self.model.generate(
-            **input_encoding,
-            generation_config=self.generation_config,
-        )
+    #     outputs = self.model.generate(
+    #         **input_encoding,
+    #         generation_config=self.generation_config,
+    #     )
+
+    #     outputs_str = self.tokenizer.batch_decode(outputs, skip_special_tokens=True)
+    #     return outputs_str
+    
+    def generate_with_prefix(self, prefix: Union[str, List[str]]) -> List[str]:
+        # Reduce the memory footprint by moving inputs to GPU as needed and freeing memory after use
+        input_encoding = self.tokenizer(prefix, return_tensors="pt", padding=True)
+        input_encoding = {key: val.to(self.args.device) for key, val in input_encoding.items()}  # Move input encoding to GPU
+
+        try:
+            outputs = self.model.generate(
+                **input_encoding,
+                **vars(self.generation_config),  # Ensure this contains memory-efficient settings
+            )
+        finally:
+            del input_encoding  # Free up memory by deleting input encoding
+            torch.cuda.empty_cache()  # Optionally clear unused memory (use with caution)
 
         outputs_str = self.tokenizer.batch_decode(outputs, skip_special_tokens=True)
         return outputs_str
+
 
     def postprocess_generation(self, prefix: str, text: str) -> List[str]:
         if self.args.domain == "news":
@@ -298,7 +336,7 @@ class OrigGenerator:
             out = default
 
         elif self.args.domain == "dialog":
-            default = len(text) > 1 and "\n" not in text 
+            default = len(text) > 1 #and "\n" not in text 
             out = default 
 
         # elif self.args.domain == "dialog":
