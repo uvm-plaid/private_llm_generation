@@ -1,6 +1,11 @@
 
 **/gen_data
+**/gen_model
 **/out_files
 **/wandb
+**/models
+**/processed
+**/pubmed_data
 *.out
+*.output
 dialogue/dp/dp_results/
