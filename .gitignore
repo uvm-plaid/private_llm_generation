@@ -3,6 +3,7 @@
 **/out_files
 **/wandb
 **/models
+**/data
 **/processed
 **/pubmed_data
 *.out
