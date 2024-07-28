@@ -7,12 +7,7 @@ Install all dependencies by running
 
 ### Reproducing Results in Paper
 
-### Datasets
-1. XSum Dataset
-2. PubMed Dataset
-3. MRPC
-
-The following shows how to reproduce results in the paper.  DOMAIN can be "news" for xsum and mrpc  and "bio" for the pubmed dataset
+The following shows how to reproduce results in the paper. The 3 datasets used in this XSum, PubMed, and MRPC dataset. The DOMAIN can be "news" for xsum and mrpc  and "bio" for the pubmed dataset
 
 ### Running Results
 
