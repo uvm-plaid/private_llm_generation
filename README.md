@@ -1,4 +1,6 @@
-# private_llm_generation
+# Decreasing Hallucinations in Differentially Private Language Models through Self-Distillation
+
+This repo contains code for the paper "Decreasing Hallucinations in Differentially Private Language Models through Self-Distillation"
 
 ### Dependencies
 Install all dependencies by running
