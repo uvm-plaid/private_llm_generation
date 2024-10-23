@@ -1,6 +1,6 @@
-# Decreasing Hallucinations in Differentially Private Language Models through Self-Distillation
+# Differentially Private Learning Needs Better Model Initialization and Self-Distillation
 
-This repo contains code for the paper "Decreasing Hallucinations in Differentially Private Language Models through Self-Distillation"
+This repo contains code for the paper "Differentially Private Learning Needs Better Model Initialization and Self-Distillation"
 
 ### Dependencies
 Install all dependencies by running
